@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import br.com.laurielcio.producer.dto.UsuarioDto;
 import br.com.laurielcio.producer.entity.Endereco;
 import br.com.laurielcio.producer.entity.Usuario;
 import br.com.laurielcio.producer.enums.UsuarioStatusEnum;
@@ -30,13 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 public class EnderecoServiceImpl implements EnderecoService{
 	
 	@Autowired
-	private UsuarioRepository professorRepository;
+	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
 	private KafkaProducerService kafkaProducerService;
 	
-	public EnderecoServiceImpl(UsuarioRepository professorRepository, KafkaProducerService kafkaProducerService) {
-		this.professorRepository = professorRepository;
+	public EnderecoServiceImpl(UsuarioRepository usuarioRepository, KafkaProducerService kafkaProducerService) {
+		this.usuarioRepository = usuarioRepository;
 		this.kafkaProducerService = kafkaProducerService;
 	}
 	
@@ -62,7 +61,7 @@ public class EnderecoServiceImpl implements EnderecoService{
 			usuario.setDtAlteracao(LocalDate.now());
 			
 			try {
-				professorRepository.save(usuario);
+				usuarioRepository.save(usuario);
 			} catch (Exception e) {
 				throw new DatabaseAccessException("Ocorreu um erro ao gravar o endereço! " + e.getMessage());
 			}						
@@ -71,7 +70,7 @@ public class EnderecoServiceImpl implements EnderecoService{
 			throw new RestTemplateException("CEP não encontrado!");	
 		}
 		
-		kafkaProducerService.producer(new UsuarioDto(usuario));
+		kafkaProducerService.producer(usuario.getIdUsuario());
 		
 		log.info("===== salvarEndereco end! ===== ");		
 	}

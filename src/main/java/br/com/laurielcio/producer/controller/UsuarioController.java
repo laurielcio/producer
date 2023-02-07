@@ -51,15 +51,15 @@ public class UsuarioController {
 	
 	@ApiOperation(value = "Endpoint para buscar registro específico de Usuário", 
 		          notes = "O parâmetro id é obrigatório e deve ser enviado via PathVariable.")
-	@GetMapping("/{idUsuario}")
-	public ResponseEntity<UsuarioDto> buscar(Long idUsuario) {
+	@GetMapping(value = "/{idUsuario}")
+	public ResponseEntity<UsuarioDto> buscar(@PathVariable Long idUsuario) {
 		UsuarioDto dto = usuarioService.buscar(idUsuario);
 		return ResponseEntity.ok().body(dto);
 	}
 	
 	@ApiOperation(value = "Endpoint para listar todos os Usuários por status", 
 			      notes = "O parâmetro status é obrigatório e deve ser enviado via PathVariable.")
-	@GetMapping("/status/{status}")
+	@GetMapping(value = "/status/{status}")
 	public ResponseEntity<List<UsuarioDto>> listar(@PathVariable UsuarioStatusEnum status) {
 		List<UsuarioDto> dtos = usuarioService.listar(status);
 		return ResponseEntity.ok().body(dtos);
@@ -67,11 +67,12 @@ public class UsuarioController {
 	
 	@ApiOperation(value = "Endpoint para alterar status de um Usuário específico", 
 	     	      notes = "Os parâmetros idUsuario e status são obrigatórios e devem ser enviados via PathVariable.")
-	@PutMapping("/{id}/{status}")
-	public ResponseEntity<UsuarioDto> alterarStatus(@PathVariable Long idUsuario, @PathVariable UsuarioStatusEnum status) {
-		UsuarioDto dto = usuarioService.alterarStatus(idUsuario, status);
+	@PutMapping(value = "/{idUsuario}/{status}")
+	public ResponseEntity<UsuarioDto> alterarStatus(@PathVariable String idUsuario, @PathVariable UsuarioStatusEnum status){
+		UsuarioDto dto = usuarioService.alterarStatus(Long.parseLong(idUsuario), status);
 		return ResponseEntity.ok().body(dto);
 	}
+	
 	
 	@ApiOperation(value = "Endpoint para alterar endereco de um Usuário específico",
 			      notes = "Os parâmetros idUsuario, cep, nrResidencia são obrigatório."
@@ -85,8 +86,9 @@ public class UsuarioController {
 	
 	@ApiOperation(value = "Endpoint para excluir registro de um Usuário específico", 
    	              notes = "O parâmetro idUsuario é obrigatório e deve ser enviado via PathVariable.")
-	@DeleteMapping("/{id}")
+	@DeleteMapping(value = "/{idUsuario}")
 	public ResponseEntity<?> excluir(@PathVariable Long idUsuario) {
+		
 		usuarioService.excluir(idUsuario);
 		return ResponseEntity.ok().build();
 	}

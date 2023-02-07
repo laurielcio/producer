@@ -3,10 +3,12 @@ package br.com.laurielcio.producer.service.impl;
 import org.apache.kafka.common.KafkaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import br.com.laurielcio.producer.dto.UsuarioDto;
+import br.com.laurielcio.producer.entity.Usuario;
+import br.com.laurielcio.producer.exception.DatabaseAccessException;
+import br.com.laurielcio.producer.repository.UsuarioRepository;
 import br.com.laurielcio.producer.service.KafkaProducerService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,21 +22,34 @@ import lombok.extern.slf4j.Slf4j;
 @Service("KafkaProducerService")
 public class KafkaProducerServiceImpl implements KafkaProducerService{
 	
-	private static final String TOPIC = "USUARIO_TOPIC";
+	private static final String TOPIC = "TRANSFERENCIA_TESTE";
 	
 	@Autowired
-	KafkaTemplate<String, UsuarioDto> kafkaTemplate;
+	private KafkaTemplate<String, UsuarioDto> kafkaTemplate;
 	
-	@Async
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
+
 	@Override
-	public void producer(UsuarioDto dto) {
+	public void producer(Long idUsuario) {
 		log.info("==== producer init... ====");
+		Usuario usuario = new Usuario();
 		
 		try {
-			kafkaTemplate.send(TOPIC, dto);
-		}catch (Exception e) {
-			throw new KafkaException("Ocorreu um erro ao produzir mensagem no servidor Kafka!");
-		}				
+			usuario = usuarioRepository.findByIdUsuario(idUsuario);
+		} catch (Exception e) {
+			throw new DatabaseAccessException("Ocorreu um erro ao buscar registro de Usuario pra envio ao servidor Kafka!");
+		}
+		
+		if(usuario != null) {
+			try {
+				kafkaTemplate.send(TOPIC, usuario.getCpf().toString(), new UsuarioDto(usuario));
+			}catch (Exception e) {
+				e.printStackTrace();
+				throw new KafkaException("Ocorreu um erro ao produzir mensagem no servidor Kafka!");
+			}
+		}						
 		
 		log.info("==== producer end! ====");		
 	}

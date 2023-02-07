@@ -1,6 +1,6 @@
 package br.com.laurielcio.producer.dto;
 
-import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +27,7 @@ public class UsuarioDto {
 
 	private String cpf;
 
-	private LocalDate dtNascimento;
+	private String dtNascimento;
 
 	private String email;
 
@@ -35,27 +35,24 @@ public class UsuarioDto {
 
 	private UsuarioStatusEnum status;
 
-	private LocalDate dtCadastro;
+	private String dtCadastro;
 
-	private LocalDate dtAlteracao;
+	private String dtAlteracao;
 
 	private EnderecoDto endereco;
 	
 	public UsuarioDto(Usuario usuario) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		this.idUsuario = usuario.getIdUsuario();
 		this.nome = usuario.getNome();
 		this.cpf = usuario.getCpf();
-		this.dtNascimento = usuario.getDtNascimento();
+		this.dtNascimento = usuario.getDtNascimento().format(formatter);
 		this.email = usuario.getEmail();
 		this.telefone = usuario.getTelefone();
 		this.status = usuario.getStatus();
-		this.dtCadastro = usuario.getDtCadastro();
-		this.dtAlteracao = usuario.getDtAlteracao();
-		if(usuario.getEndereco() == null) {
-			this.endereco = null;
-		}else {
-			this.endereco = new EnderecoDto(usuario.getEndereco());
-		}		
+		this.dtCadastro = usuario.getDtCadastro().format(formatter);		
+		if(usuario.getDtAlteracao() != null) this.dtAlteracao = usuario.getDtAlteracao().format(formatter);		
+		if(usuario.getEndereco() != null) this.endereco = new EnderecoDto(usuario.getEndereco());			
 	}
 	
 	public static List<UsuarioDto> convert(List<Usuario> usuarios){

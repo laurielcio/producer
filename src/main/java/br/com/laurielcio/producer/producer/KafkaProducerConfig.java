@@ -1,14 +1,12 @@
-package br.com.laurielcio.producer.config;
+package br.com.laurielcio.producer.producer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -18,30 +16,25 @@ import br.com.laurielcio.producer.dto.UsuarioDto;
 
 /**
  * 
- * @author LAURIELCIO
+ * @author Lau
  *
  */
 
-@EnableKafka
 @Configuration
-public class KafkaConfig {
-	
-	@Value("${spring.kafka.bootstrap-servers}")
-	private String bootstrapServers;
+public class KafkaProducerConfig {
 	
 	@Bean
 	public ProducerFactory<String, UsuarioDto> producerFactory(){
+		Map<String, Object> config = new HashMap<>();
 		
-		Map<String, Object> configs = new HashMap<>();
+		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);	
+		config.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
 		
-		configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-		configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-		
-		return new DefaultKafkaProducerFactory<>(configs);
+		return new DefaultKafkaProducerFactory<>(config);				
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Bean
 	public KafkaTemplate kafkaTemplate() {
 		return new KafkaTemplate<>(producerFactory());

@@ -1,7 +1,5 @@
 package br.com.laurielcio.producer.service;
 
-import br.com.laurielcio.producer.dto.UsuarioDto;
-
 /**
  * 
  * @author Lau
@@ -10,6 +8,6 @@ import br.com.laurielcio.producer.dto.UsuarioDto;
 
 public interface KafkaProducerService {
 
-	void producer(UsuarioDto dto);
+	void producer(Long idUsuario);
 
 }

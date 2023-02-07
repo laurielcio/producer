@@ -1,5 +1,7 @@
 package br.com.laurielcio.producer.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,8 +23,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Table(name = "ENDERECO")
-public class Endereco {
+public class Endereco implements Serializable{
 	
+	private static final long serialVersionUID = -8167661659832615572L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false)

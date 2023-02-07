@@ -38,9 +38,13 @@ public class UsuarioServiceImpl implements UsuarioService{
 	@Autowired
 	private EnderecoService enderecoService;
 	
+	public UsuarioServiceImpl() {
+		
+	}
 	
-	public UsuarioServiceImpl(UsuarioRepository usuarioRepository, EnderecoService enderecoServicee) {
+	public UsuarioServiceImpl(final UsuarioRepository usuarioRepository, final EnderecoService enderecoService) {
 		this.usuarioRepository = usuarioRepository;
+		this.enderecoService = enderecoService;
 	}
 
 	@Override
@@ -103,6 +107,8 @@ public class UsuarioServiceImpl implements UsuarioService{
 			throw new DatabaseAccessException("Ocorreu um erro ao acessar o banco ao buscar lista de Usuarios por status! " + e.getMessage());
 		}
 		
+		if(usuarios.isEmpty()) throw new ObjectNoContent("Nenhum Usuario encontrado no bando de dados!");
+		
 		log.info("==== listar end! ====");		
 		return UsuarioDto.convert(usuarios);
 	}
@@ -156,6 +162,8 @@ public class UsuarioServiceImpl implements UsuarioService{
 		} catch (Exception e) {
 			throw new DatabaseAccessException("Ocorreu um erro ao acessar o banco para excluir registro de Usuario! " + e.getMessage());
 		}
+		
+		if(usuario == null) throw new ObjectNoContent("Nenhum Usuario encontrado com o idUsuario informado!");
 		
 		if(usuario.getStatus() == UsuarioStatusEnum.ATIVO) throw new ValidationException("Proibido a exclusao de registro de Usuario com status ATIVO!");	
 		
