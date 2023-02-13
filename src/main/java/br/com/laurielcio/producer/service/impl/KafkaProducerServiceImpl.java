@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service("KafkaProducerService")
 public class KafkaProducerServiceImpl implements KafkaProducerService{
 	
-	private static final String TOPIC = "TRANSFERENCIA_TESTE";
+	private static final String TOPIC = "LAU_TOPIC";
 	
 	@Autowired
 	private KafkaTemplate<String, UsuarioDto> kafkaTemplate;
